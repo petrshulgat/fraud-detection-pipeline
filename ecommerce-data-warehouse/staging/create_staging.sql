@@ -23,3 +23,4 @@ create table staging.orders(
     unit_price decimal(10, 2),
     total_amount decimal(10, 2)
 );
+
