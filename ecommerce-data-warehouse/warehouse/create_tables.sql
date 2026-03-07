@@ -46,3 +46,5 @@ ADD CONSTRAINT uq_product_id UNIQUE (product_id);
 
 ALTER TABLE warehouse.dim_date
 ADD CONSTRAINT uq_date_key UNIQUE (date_key);
+
+alter table warehouse.fact_orders drop column unit_price ;
