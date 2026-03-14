@@ -6,3 +6,6 @@ create table fraud_alerts (
     country varchar(100),
     created_at TIMESTAMP default current_timestamp
 );
+
+
+alter table fraud_alerts add column event_time timestamp;
