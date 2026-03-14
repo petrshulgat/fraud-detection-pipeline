@@ -20,6 +20,8 @@ consumer = KafkaConsumer(
 for message in consumer:
     transaction = message.value
 
+    event_time = transaction.get("timestamp") or transaction.get("created_at")
+
     if 'amount' not in transaction:
         print('Skip invalid message:', transaction)
         continue
@@ -28,10 +30,10 @@ for message in consumer:
         print('Fraud Alert:', transaction)
 
         cursor.execute("""
-            insert into fraud_alerts(user_id, amount, merchant, country)
-            values(%s, %s, %s, %s)
+            insert into fraud_alerts(user_id, amount, merchant, country, event_time)
+            values(%s, %s, %s, %s, %s)
         """, (
-            transaction['user_id'], transaction['amount'], transaction['merchant'], transaction['country']
+            transaction['user_id'], transaction['amount'], transaction['merchant'], transaction['country'], event_time
         )
         )
 

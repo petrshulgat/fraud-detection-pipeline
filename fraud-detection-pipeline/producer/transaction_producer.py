@@ -18,7 +18,7 @@ while True:
         'amount': round(random.uniform(5, 2000), 2),
         'merchant': fake.company(),
         'country': fake.country_code(),
-        'created_at': datetime.utcnow().isoformat()
+        'timestamp': datetime.utcnow().isoformat()
     }
 
     producer.send("transactions", transaction)
