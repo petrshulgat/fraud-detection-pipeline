@@ -1,5 +1,6 @@
 from kafka import KafkaProducer
 from faker import Faker
+from datetime import datetime
 import json
 import random
 import time
@@ -16,7 +17,8 @@ while True:
         'user_id': random.randint(1, 1000),
         'amount': round(random.uniform(5, 2000), 2),
         'merchant': fake.company(),
-        'country': fake.country_code()
+        'country': fake.country_code(),
+        'created_at': datetime.utcnow().isoformat()
     }
 
     producer.send("transactions", transaction)
