@@ -1,4 +1,5 @@
 from kafka import KafkaConsumer
+from kafka import KafkaProducer
 import psycopg2
 import json 
 
@@ -9,6 +10,11 @@ conn = psycopg2.connect(
     password = 'admin'
 )
 cursor = conn.cursor()
+
+fraud_producer = KafkaProducer(
+    bootstrap_server = 'kafka:9092',
+    value_serializer = lambda v: json.dumps(v).encode('utf-8')
+)
 
 consumer = KafkaConsumer(
     'transactions',
@@ -26,16 +32,11 @@ for message in consumer:
         print('Skip invalid message:', transaction)
         continue
 
-    if transaction['amount'] > 1000:
-        print('Fraud Alert:', transaction)
+    if transaction["amount"] > 1000:
+        print("Fraud Alert:", transaction)
 
-        cursor.execute("""
-            insert into fraud_alerts(user_id, amount, merchant, country, event_time)
-            values(%s, %s, %s, %s, %s)
-        """, (
-            transaction['user_id'], transaction['amount'], transaction['merchant'], transaction['country'], event_time
-        )
-        )
+        fraud_producer.send("fraud_alerts", transaction)
+        fraud_producer.flush()
 
         conn.commit()
 
